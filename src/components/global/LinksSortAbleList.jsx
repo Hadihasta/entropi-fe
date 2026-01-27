@@ -50,10 +50,13 @@ export default function LinksSortableList() {
         strategy={verticalListSortingStrategy}
       >
         <div className="space-y-3">
-          {links.map((link) => (
+          {links.map((link, index) => (
             <SortableLink
-              key={link.id}
+            key={index}
               link={link}
+              onUpdate={(updated) => updateLink(updated)}
+              onDelete={(id) => deleteLink(id)}
+              onDuplicate={(link) => duplicateLink(link)}
             />
           ))}
         </div>
