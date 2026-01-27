@@ -1,13 +1,21 @@
 "use client";
-
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, X } from "lucide-react";
+import { useLinksStore } from "@/store/useLinkStore";
 
-export default function AddModal({ open, onClose }) {
-  const [step, setStep] = useState("choose"); // "choose" | "link" | "collection" | "header"
+export default function AddModal({ open, onClose,collectionId   }) {
+  const addLinkToCollection = useLinksStore(
+    (s) => s.addLinkToCollection )
+  const [step, setStep] = useState("choose");
   const [url, setUrl] = useState("");
   const [title, setTitle] = useState("");
+
+  const normalizeUrl = (value) => {
+    if (!value) return "";
+    if (!/^https?:\/\//i.test(value)) return "https://" + value;
+    return value;
+  };
 
   const handleClose = () => {
     setStep("choose");
@@ -16,22 +24,28 @@ export default function AddModal({ open, onClose }) {
     onClose();
   };
 
-  const handleSave = () => {
-    // Handle save logic here
-    console.log({ step, url, title });
-    handleClose();
-  };
+const handleSave = () => {
+  if (!url.trim() || !title.trim()) return
 
+  addLinkToCollection(collectionId, {
+    title: title.trim(),
+    url: normalizeUrl(url.trim()),
+  })
+
+  setUrl('')
+  setTitle('')
+  onClose()
+}
   if (!open) return null;
 
   return (
     <AnimatePresence>
       <motion.div
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-end md:items-center justify-center z-50"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={handleClose}
-        className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-end md:items-center justify-center z-50"
       >
         <motion.div
           initial={{ y: "100%", opacity: 0 }}
@@ -41,23 +55,16 @@ export default function AddModal({ open, onClose }) {
           onClick={(e) => e.stopPropagation()}
           className="bg-white rounded-t-3xl md:rounded-2xl p-6 w-full md:w-[480px] md:max-w-[90vw] shadow-2xl"
         >
-          {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-bold text-gray-800">
               {step === "choose" && "Add New Item"}
               {step === "link" && "Add Link"}
-              {step === "collection" && "Add Collection"}
-              {step === "header" && "Add Header"}
             </h2>
-            <button
-              onClick={handleClose}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-            >
-              <X size={20} className="text-gray-500" />
+            <button onClick={handleClose} className="p-2 hover:bg-gray-100 rounded-full">
+              <X size={20} />
             </button>
           </div>
 
-          {/* Content */}
           <AnimatePresence mode="wait">
             {step === "choose" && (
               <motion.div
@@ -70,10 +77,9 @@ export default function AddModal({ open, onClose }) {
                 <OptionButton
                   icon={<Link size={20} />}
                   title="New Link"
-                  description="Add a new link to your collection"
+                  description="Add a new link to active collection"
                   onClick={() => setStep("link")}
                 />
-    
               </motion.div>
             )}
 
@@ -86,89 +92,32 @@ export default function AddModal({ open, onClose }) {
                 className="space-y-4"
               >
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    URL *
-                  </label>
+                  <label className="block text-sm font-medium mb-2">URL *</label>
                   <input
-                    type="url"
+                    type="text"
                     value={url}
                     onChange={(e) => setUrl(e.target.value)}
-                    placeholder="https://example.com"
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                    onBlur={() => setUrl(normalizeUrl(url))}
+                    placeholder="https://"
+                    className="w-full border rounded-lg px-4 py-2.5"
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Title (optional)
-                  </label>
-                  <input
-                    type="text"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    placeholder="My awesome link"
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-                  />
-                </div>
-                <ActionButtons
-                  onCancel={() => setStep("choose")}
-                  onSave={handleSave}
-                  saveDisabled={!url}
-                />
-              </motion.div>
-            )}
 
-            {step === "collection" && (
-              <motion.div
-                key="collection"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                className="space-y-4"
-              >
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Collection Name *
-                  </label>
+                  <label className="block text-sm font-medium mb-2">Title *</label>
                   <input
                     type="text"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    placeholder="Work Links"
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                    placeholder="Instagram Hadi"
+                    className="w-full border rounded-lg px-4 py-2.5"
                   />
                 </div>
-                <ActionButtons
-                  onCancel={() => setStep("choose")}
-                  onSave={handleSave}
-                  saveDisabled={!title}
-                />
-              </motion.div>
-            )}
 
-            {step === "header" && (
-              <motion.div
-                key="header"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                className="space-y-4"
-              >
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Header Text *
-                  </label>
-                  <input
-                    type="text"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    placeholder="Important Links"
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-                  />
-                </div>
                 <ActionButtons
                   onCancel={() => setStep("choose")}
                   onSave={handleSave}
-                  saveDisabled={!title}
+                  saveDisabled={!url.trim() || !title.trim()}
                 />
               </motion.div>
             )}
@@ -178,6 +127,7 @@ export default function AddModal({ open, onClose }) {
     </AnimatePresence>
   );
 }
+
 
 function OptionButton({ icon, title, description, onClick }) {
   return (

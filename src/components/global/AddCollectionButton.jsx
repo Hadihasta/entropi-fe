@@ -3,7 +3,9 @@
 import { FolderPlus } from "lucide-react";
 import { motion } from "framer-motion";
 
+
 export default function AddCollectionButton({ onClick }) {
+
   return (
     <motion.button
       onClick={onClick}

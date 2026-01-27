@@ -1,28 +1,43 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { DndContext, closestCenter, PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core'
-import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable'
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core'
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  arrayMove,
+} from '@dnd-kit/sortable'
 
 import { useLinksStore } from '@/store/useLinkStore'
 import SortableLink from './SortAbleLink'
 
 export default function LinksSortableList() {
-  const { links, reorderLinks } = useLinksStore()
+  // 🔥 ambil collections + active id
+  const collections = useLinksStore((s) => s.collections)
+  const activeCollectionId = useLinksStore((s) => s.activeCollectionId)
 
+  const reorderLinks = useLinksStore((s) => s.reorderLinks)
+  const updateLink = useLinksStore((s) => s.updateLink)
+  const deleteLink = useLinksStore((s) => s.deleteLink)
+  const duplicateLink = useLinksStore((s) => s.duplicateLink)
+
+  // 🔹 ambil links dari collection aktif
+  const activeCollection = collections.find(c => c.id === activeCollectionId)
+  const links = activeCollection?.links || []
 
   const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: { distance: 5 },
-    }),
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
     useSensor(TouchSensor, {
-      activationConstraint: {
-        delay: 150,
-        tolerance: 5,
-      },
+      activationConstraint: { delay: 150, tolerance: 5 },
     }),
   )
-
 
   const [mounted, setMounted] = useState(false)
   useEffect(() => setMounted(true), [])
@@ -50,13 +65,13 @@ export default function LinksSortableList() {
         strategy={verticalListSortingStrategy}
       >
         <div className="space-y-3">
-          {links.map((link, index) => (
+          {links.map((link) => (
             <SortableLink
-            key={index}
+              key={link.id}   
               link={link}
-              onUpdate={(updated) => updateLink(updated)}
-              onDelete={(id) => deleteLink(id)}
-              onDuplicate={(link) => duplicateLink(link)}
+              onUpdate={updateLink}
+              onDelete={deleteLink}
+              onDuplicate={duplicateLink}
             />
           ))}
         </div>
