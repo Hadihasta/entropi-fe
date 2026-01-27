@@ -10,7 +10,7 @@ import SortableLink from './SortAbleLink'
 export default function LinksSortableList() {
   const { links, reorderLinks } = useLinksStore()
 
-  // ✅ Desktop + Mobile
+
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: { distance: 5 },
@@ -23,7 +23,7 @@ export default function LinksSortableList() {
     }),
   )
 
-  // ✅ Prevent hydration mismatch
+
   const [mounted, setMounted] = useState(false)
   useEffect(() => setMounted(true), [])
 
