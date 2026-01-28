@@ -114,7 +114,7 @@ export default function AddModal({ open, onClose, collectionIndex }) {
                     type="text"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    placeholder="Instagram Hadi"
+                    placeholder="Tittle Here"
                     className="w-full border rounded-lg px-4 py-2.5"
                   />
                 </div>

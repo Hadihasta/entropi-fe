@@ -10,7 +10,6 @@ export default function CollectionCard({ title, children, index }) {
 
   return (
     <div className="bg-white/10 rounded-xl p-4 border border-white/20">
-    
       <div className="flex justify-between items-center w-full">
         <button
           onClick={() => setOpen(!open)}
@@ -20,7 +19,6 @@ export default function CollectionCard({ title, children, index }) {
           <ChevronDown className={`transition-transform duration-300 ${open ? 'rotate-180' : ''}`} />
         </button>
 
-   
         <button
           onClick={() => setModalOpen(true)}
           className="p-2 hover:bg-white/10 rounded-lg transition-colors group"
@@ -32,14 +30,11 @@ export default function CollectionCard({ title, children, index }) {
         </button>
       </div>
 
-
       <AddModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
-  collectionIndex={index}
-  
+        collectionIndex={index}
       />
-
 
       {open && <div className="mt-4 space-y-3">{children}</div>}
     </div>

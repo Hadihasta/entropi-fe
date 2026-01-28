@@ -131,7 +131,7 @@ export default function SortableLink({ link, onUpdate, onDelete, onDuplicate }) 
 
         {/* RIGHT */}
         <div className="flex items-center gap-3 shrink-0">
-          <span className="text-xs opacity-70 whitespace-nowrap">0 clicks</span>
+          <span className="text-xs opacity-70 whitespace-nowrap">28 clicks</span>
 
           {/* Toggle */}
           <button

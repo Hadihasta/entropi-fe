@@ -73,37 +73,51 @@ export const useLinksStore = create((set) => ({
       ),
     })),
 
-  // ✏️ UPDATE LINK
-  updateLink: (updatedLink) =>
-    set((state) => ({
-      collections: state.collections.map((col) =>
-        col.id === state.activeCollectionId
-          ? {
-              ...col,
-              links: col.links.map((l) => (l.id === updatedLink.id ? updatedLink : l)),
-            }
-          : col,
-      ),
-    })),
 
-  // 🗑 DELETE LINK
-  deleteLink: (linkId) =>
-    set((state) => ({
-      collections: state.collections.map((col) =>
-        col.id === state.activeCollectionId ? { ...col, links: col.links.filter((l) => l.id !== linkId) } : col,
-      ),
-    })),
+reorderLinks: (collectionId, newLinks) =>
+  set((state) => ({
+    collections: state.collections.map((col) =>
+      col.id === collectionId
+        ? { ...col, links: newLinks }
+        : col,
+    ),
+  })),
+updateLink: (collectionId, updatedLink) =>
+  set((state) => ({
+    collections: state.collections.map((col) =>
+      col.id === collectionId
+        ? {
+            ...col,
+            links: col.links.map((l) =>
+              l.id === updatedLink.id ? updatedLink : l
+            ),
+          }
+        : col,
+    ),
+  })),
+deleteLink: (collectionId, linkId) =>
+  set((state) => ({
+    collections: state.collections.map((col) =>
+      col.id === collectionId
+        ? { ...col, links: col.links.filter((l) => l.id !== linkId) }
+        : col,
+    ),
+  })),
 
-  // 🔀 REORDER
-  reorderLinks: (newLinks) =>
-    set((state) => ({
-      collections: state.collections.map((col) =>
-        col.id === state.activeCollectionId ? { ...col, links: newLinks } : col,
-      ),
-    })),
-
-    
-
+  duplicateLink: (collectionId, link) =>
+  set((state) => ({
+    collections: state.collections.map((col) =>
+      col.id === collectionId
+        ? {
+            ...col,
+            links: [
+              ...col.links,
+              { ...link, id: Date.now() },
+            ],
+          }
+        : col,
+    ),
+  })),
 
   addLinkToCollectionByIndex: (collectionIndex, { title, url }) =>
     set((state) => {
@@ -135,20 +149,20 @@ export const useLinksStore = create((set) => ({
 }))
 
 
-useLinksStore.subscribe((state, prevState) => {
-  state.collections.forEach((col, i) => {
-    const prevCol = prevState.collections[i]
+// useLinksStore.subscribe((state, prevState) => {
+//   state.collections.forEach((col, i) => {
+//     const prevCol = prevState.collections[i]
 
-    // Collection baru
-    if (!prevCol) {
-      console.log("🆕 Collection ditambah:", col)
-      return
-    }
+//     // Collection baru
+//     if (!prevCol) {
+//       console.log("🆕 Collection ditambah:", col)
+//       return
+//     }
 
-    // Link baru
-    if (col.links.length > prevCol.links.length) {
-      const newLink = col.links[col.links.length - 1]
-      console.log(`🔗 Link baru di Collection ${col.id}:`, newLink)
-    }
-  })
-})
+//     // Link baru
+//     if (col.links.length > prevCol.links.length) {
+//       const newLink = col.links[col.links.length - 1]
+//       console.log(`🔗 Link baru di Collection ${col.id}:`, newLink)
+//     }
+//   })
+// })

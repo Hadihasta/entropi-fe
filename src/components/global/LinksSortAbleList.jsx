@@ -18,19 +18,17 @@ import {
 import { useLinksStore } from '@/store/useLinkStore'
 import SortableLink from './SortAbleLink'
 
-export default function LinksSortableList() {
-
-  const collections = useLinksStore((s) => s.collections)
-  const activeCollectionId = useLinksStore((s) => s.activeCollectionId)
+export default function LinksSortableList({ links, collectionId }) {
 
   const reorderLinks = useLinksStore((s) => s.reorderLinks)
   const updateLink = useLinksStore((s) => s.updateLink)
   const deleteLink = useLinksStore((s) => s.deleteLink)
   const duplicateLink = useLinksStore((s) => s.duplicateLink)
 
- 
-  const activeCollection = collections.find(c => c.id === activeCollectionId)
-  const links = activeCollection?.links || []
+
+  useEffect(()=>{
+    console.log(links, " enter cmponent")
+  },[links])
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -49,29 +47,22 @@ export default function LinksSortableList() {
     const oldIndex = links.findIndex((l) => l.id === active.id)
     const newIndex = links.findIndex((l) => l.id === over.id)
 
-    reorderLinks(arrayMove(links, oldIndex, newIndex))
+    reorderLinks(collectionId, arrayMove(links, oldIndex, newIndex))
   }
 
   if (!mounted) return null
 
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCenter}
-      onDragEnd={handleDragEnd}
-    >
-      <SortableContext
-        items={links.map((l) => l.id)}
-        strategy={verticalListSortingStrategy}
-      >
+    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+      <SortableContext items={links.map((l) => l.id)} strategy={verticalListSortingStrategy}>
         <div className="space-y-3">
           {links.map((link) => (
             <SortableLink
-              key={link.id}   
+              key={link.id}
               link={link}
-              onUpdate={updateLink}
-              onDelete={deleteLink}
-              onDuplicate={duplicateLink}
+              onUpdate={(l) => updateLink(collectionId, l)}
+              onDelete={(id) => deleteLink(collectionId, id)}
+              onDuplicate={(l) => duplicateLink(collectionId, l)}
             />
           ))}
         </div>
