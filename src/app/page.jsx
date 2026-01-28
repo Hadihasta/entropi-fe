@@ -13,9 +13,6 @@ export default function Home() {
   const addCollection = useLinksStore((s) => s.addCollection)
   const isAddingCollection = useLinksStore((s) => s.isAddingCollection)
 
-  useEffect(() => {
-    console.log(collections, 'here')
-  }, [collections])
 
   return (
     <div className="flex min-h-screen w-full bg-linear-160 from-primary to-secondary text-foreground">

@@ -26,9 +26,6 @@ export default function LinksSortableList({ links, collectionId }) {
   const duplicateLink = useLinksStore((s) => s.duplicateLink)
 
 
-  useEffect(()=>{
-    console.log(links, " enter cmponent")
-  },[links])
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
