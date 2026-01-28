@@ -40,12 +40,13 @@ export const useLinksStore = create((set) => ({
 
       return {
         collections: [
+                 ...state.collections,
           {
             id: newId,
             name: `Collection ${newId}`,
             links: [],
           },
-          ...state.collections,
+   
         ],
         isAddingCollection: false,
       }
@@ -118,51 +119,29 @@ deleteLink: (collectionId, linkId) =>
         : col,
     ),
   })),
+addLinkToCollection: (collectionId, { title, url }) =>
+  set((state) => ({
+    collections: state.collections.map((col) => {
+      if (col.id !== collectionId) return col
 
-  addLinkToCollectionByIndex: (collectionIndex, { title, url }) =>
-    set((state) => {
-      const updated = [...state.collections]
-      console.log(updated)
-      const targetCollection = updated[collectionIndex]
-        if (!targetCollection) return state
-         const nextId = getNextLinkId(targetCollection.links)
-      if (!updated[collectionIndex]) return state
+      const nextId = getNextLinkId(col.links)
 
-      updated[collectionIndex] = {
-        ...updated[collectionIndex],
+      return {
+        ...col,
         links: [
-          ...updated[collectionIndex].links,
+          ...col.links,
           {
-            id: nextId,
+            id: String(nextId),
             title,
             url,
             enabled: true,
           },
         ],
       }
-
-      return { collections: updated }
     }),
+  })),
 
 
     
 }))
 
-
-// useLinksStore.subscribe((state, prevState) => {
-//   state.collections.forEach((col, i) => {
-//     const prevCol = prevState.collections[i]
-
-//     // Collection baru
-//     if (!prevCol) {
-//       console.log("🆕 Collection ditambah:", col)
-//       return
-//     }
-
-//     // Link baru
-//     if (col.links.length > prevCol.links.length) {
-//       const newLink = col.links[col.links.length - 1]
-//       console.log(`🔗 Link baru di Collection ${col.id}:`, newLink)
-//     }
-//   })
-// })

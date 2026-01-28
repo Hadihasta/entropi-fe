@@ -4,8 +4,9 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Link, X } from 'lucide-react'
 import { useLinksStore } from '@/store/useLinkStore'
 
-export default function AddModal({ open, onClose, collectionIndex }) {
-  const addLinkToCollection = useLinksStore((s) => s.addLinkToCollectionByIndex)
+export default function AddModal({ open, onClose, collectionId  }) {
+const addLinkToCollection = useLinksStore((s) => s.addLinkToCollection)
+
 
   const [step, setStep] = useState('choose')
   const [url, setUrl] = useState('')
@@ -27,11 +28,10 @@ export default function AddModal({ open, onClose, collectionIndex }) {
 
   const handleSave = () => {
     if (!url.trim() || !title.trim()) return
-
-    addLinkToCollection(collectionIndex, {
-      title: title.trim(),
-      url: normalizeUrl(url.trim()),
-    })
+addLinkToCollection(collectionId, {
+  title: title.trim(),
+  url: normalizeUrl(url.trim()),
+})
 
     setUrl('')
     setTitle('')

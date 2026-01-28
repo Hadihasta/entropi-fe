@@ -11,8 +11,6 @@ import SkeletonDot from '@/components/global/SkeletonDot'
 export default function Home() {
   const collections = useLinksStore((s) => s.collections)
   const addCollection = useLinksStore((s) => s.addCollection)
-  const setActiveCollection = useLinksStore((s) => s.setActiveCollection)
-  const activeCollectionId = useLinksStore((s) => s.activeCollectionId)
   const isAddingCollection = useLinksStore((s) => s.isAddingCollection)
 
   useEffect(() => {
@@ -25,12 +23,11 @@ export default function Home() {
       <main className="flex-1 p-8 space-y-6 md:ml-0 pt-20 md:pt-8 max-w-screen">
         <AddCollectionButton onClick={addCollection} />
 
-        {isAddingCollection && <SkeletonDot />}
-
         {collections.map((col) => (
           <CollectionCard
-            key={col.id}
-            title={col.name}
+          key={col.id}
+    title={col.name}
+    collectionId={col.id} 
           >
             <LinksSortableList
               links={col.links}
@@ -38,6 +35,7 @@ export default function Home() {
             />
           </CollectionCard>
         ))}
+        {isAddingCollection && <SkeletonDot />}
       </main>
     </div>
   )

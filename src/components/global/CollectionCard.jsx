@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { ChevronDown, Plus } from 'lucide-react'
 import AddModal from './AddModal'
 
-export default function CollectionCard({ title, children, index }) {
+export default function CollectionCard({ title, children, collectionId }) {
   const [open, setOpen] = useState(true)
   const [modalOpen, setModalOpen] = useState(false)
 
@@ -33,7 +33,7 @@ export default function CollectionCard({ title, children, index }) {
       <AddModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
-        collectionIndex={index}
+        collectionId={collectionId}   // ✅ PASS ID
       />
 
       {open && <div className="mt-4 space-y-3">{children}</div>}
