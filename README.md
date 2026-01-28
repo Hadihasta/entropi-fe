@@ -19,3 +19,7 @@ Komponen mengubah state lewat action:
 const addLink = useLinksStore(s => s.addLinkToCollection)
 
 Saat state berubah → semua komponen yang memakai data tersebut otomatis re-render.
+
+
+atau bisa coba akses public :
+https://entropi-o9wwnzf6b-hadis-projects-30e4620e.vercel.app/
