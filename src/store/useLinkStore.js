@@ -1,45 +1,55 @@
-import { create } from "zustand";
-import { nanoid } from "nanoid";
+import { create } from 'zustand'
+// import { nanoid } from "nanoid";
+
+const getNextCollectionId = (collections) => {
+  if (collections.length === 0) return 1
+  return Math.max(...collections.map((c) => Number(c.id))) + 1
+}
+
+const getNextLinkId = (links) => {
+  if (links.length === 0) return 1
+  return Math.max(...links.map((l) => Number(l.id))) + 1
+}
 
 export const useLinksStore = create((set) => ({
   collections: [
     {
       id: 1,
-      name: "Collection 1",
+      name: 'Collection 1',
       links: [
-        { id: "1", title: "Website", url: "https://example.com", enabled: true },
-        { id: "2", title: "Instagram", url: "https://instagram.com", enabled: true },
+        { id: '1', title: 'Website', url: 'https://example.com', enabled: true },
+        { id: '2', title: 'Instagram', url: 'https://instagram.com', enabled: true },
       ],
     },
   ],
 
   activeCollectionId: 1,
-   isAddingCollection: false, // 👈 NEW
-
+  isAddingCollection: false, 
 
   // 🔹 SET COLLECTION ACTIVE
   setActiveCollection: (id) => set({ activeCollectionId: id }),
 
   // ➕ ADD COLLECTION (dipanggil tombol kamu)
-   addCollection: async () => {
-    set({ isAddingCollection: true }) // start loading
+  addCollection: async () => {
+    set({ isAddingCollection: true })
 
-    // ⏳ fake delay (ganti API nanti)
     await new Promise((r) => setTimeout(r, 700))
-    
-    set((state) => ({
-      
-      collections: [
-     
-        {
-          id: nanoid(),
-          name: `Collection ${state.collections.length + 1}`,
-          links: [],
-        },
-           ...state.collections,
-      ],
-      isAddingCollection: false, // stop loading
-    }))
+
+    set((state) => {
+      const newId = getNextCollectionId(state.collections)
+
+      return {
+        collections: [
+          {
+            id: newId,
+            name: `Collection ${newId}`,
+            links: [],
+          },
+          ...state.collections,
+        ],
+        isAddingCollection: false,
+      }
+    })
   },
 
   // ➕ ADD LINK KE COLLECTION AKTIF
@@ -53,13 +63,13 @@ export const useLinksStore = create((set) => ({
                 ...col.links,
                 {
                   id: nanoid(),
-                  title: "New Link",
-                  url: "https://",
+                  title: 'New Link',
+                  url: 'https://',
                   enabled: true,
                 },
               ],
             }
-          : col
+          : col,
       ),
     })),
 
@@ -70,11 +80,9 @@ export const useLinksStore = create((set) => ({
         col.id === state.activeCollectionId
           ? {
               ...col,
-              links: col.links.map((l) =>
-                l.id === updatedLink.id ? updatedLink : l
-              ),
+              links: col.links.map((l) => (l.id === updatedLink.id ? updatedLink : l)),
             }
-          : col
+          : col,
       ),
     })),
 
@@ -82,9 +90,7 @@ export const useLinksStore = create((set) => ({
   deleteLink: (linkId) =>
     set((state) => ({
       collections: state.collections.map((col) =>
-        col.id === state.activeCollectionId
-          ? { ...col, links: col.links.filter((l) => l.id !== linkId) }
-          : col
+        col.id === state.activeCollectionId ? { ...col, links: col.links.filter((l) => l.id !== linkId) } : col,
       ),
     })),
 
@@ -92,28 +98,57 @@ export const useLinksStore = create((set) => ({
   reorderLinks: (newLinks) =>
     set((state) => ({
       collections: state.collections.map((col) =>
-        col.id === state.activeCollectionId ? { ...col, links: newLinks } : col
+        col.id === state.activeCollectionId ? { ...col, links: newLinks } : col,
       ),
     })),
 
-  
-addLinkToCollection: (collectionId, { title, url }) =>
-  set((state) => ({
-    collections: state.collections.map((col) =>
-      col.id === collectionId
-        ? {
-            ...col,
-            links: [
-              ...col.links,
-              {
-                id: nanoid(),
-                title,
-                url,
-                enabled: true,
-              },
-            ],
-          }
-        : col
-    ),
-  })),
-}));
+    
+
+
+  addLinkToCollectionByIndex: (collectionIndex, { title, url }) =>
+    set((state) => {
+      const updated = [...state.collections]
+      console.log(updated)
+      const targetCollection = updated[collectionIndex]
+        if (!targetCollection) return state
+         const nextId = getNextLinkId(targetCollection.links)
+      if (!updated[collectionIndex]) return state
+
+      updated[collectionIndex] = {
+        ...updated[collectionIndex],
+        links: [
+          ...updated[collectionIndex].links,
+          {
+            id: nextId,
+            title,
+            url,
+            enabled: true,
+          },
+        ],
+      }
+
+      return { collections: updated }
+    }),
+
+
+    
+}))
+
+
+useLinksStore.subscribe((state, prevState) => {
+  state.collections.forEach((col, i) => {
+    const prevCol = prevState.collections[i]
+
+    // Collection baru
+    if (!prevCol) {
+      console.log("🆕 Collection ditambah:", col)
+      return
+    }
+
+    // Link baru
+    if (col.links.length > prevCol.links.length) {
+      const newLink = col.links[col.links.length - 1]
+      console.log(`🔗 Link baru di Collection ${col.id}:`, newLink)
+    }
+  })
+})

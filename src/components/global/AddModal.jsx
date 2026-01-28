@@ -1,42 +1,44 @@
-"use client";
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Link, X } from "lucide-react";
-import { useLinksStore } from "@/store/useLinkStore";
+'use client'
+import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Link, X } from 'lucide-react'
+import { useLinksStore } from '@/store/useLinkStore'
 
-export default function AddModal({ open, onClose,collectionId   }) {
-  const addLinkToCollection = useLinksStore(
-    (s) => s.addLinkToCollection )
-  const [step, setStep] = useState("choose");
-  const [url, setUrl] = useState("");
-  const [title, setTitle] = useState("");
+export default function AddModal({ open, onClose, collectionIndex }) {
+  const addLinkToCollection = useLinksStore((s) => s.addLinkToCollectionByIndex)
+
+  const [step, setStep] = useState('choose')
+  const [url, setUrl] = useState('')
+  const [title, setTitle] = useState('')
 
   const normalizeUrl = (value) => {
-    if (!value) return "";
-    if (!/^https?:\/\//i.test(value)) return "https://" + value;
-    return value;
-  };
+    if (!value) return ''
+    if (!/^https?:\/\//i.test(value)) return 'https://' + value
+    return value
+  }
 
   const handleClose = () => {
-    setStep("choose");
-    setUrl("");
-    setTitle("");
-    onClose();
-  };
+    setStep('choose')
+    setUrl('')
+    setTitle('')
+    onClose()
+  }
 
-const handleSave = () => {
-  if (!url.trim() || !title.trim()) return
 
-  addLinkToCollection(collectionId, {
-    title: title.trim(),
-    url: normalizeUrl(url.trim()),
-  })
+  const handleSave = () => {
+    if (!url.trim() || !title.trim()) return
 
-  setUrl('')
-  setTitle('')
-  onClose()
-}
-  if (!open) return null;
+    addLinkToCollection(collectionIndex, {
+      title: title.trim(),
+      url: normalizeUrl(url.trim()),
+    })
+
+    setUrl('')
+    setTitle('')
+    onClose()
+  }
+
+  if (!open) return null
 
   return (
     <AnimatePresence>
@@ -48,25 +50,28 @@ const handleSave = () => {
         onClick={handleClose}
       >
         <motion.div
-          initial={{ y: "100%", opacity: 0 }}
+          initial={{ y: '100%', opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          exit={{ y: "100%", opacity: 0 }}
-          transition={{ type: "spring", damping: 25, stiffness: 300 }}
+          exit={{ y: '100%', opacity: 0 }}
+          transition={{ type: 'spring', damping: 25, stiffness: 300 }}
           onClick={(e) => e.stopPropagation()}
           className="bg-white rounded-t-3xl md:rounded-2xl p-6 w-full md:w-[480px] md:max-w-[90vw] shadow-2xl"
         >
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-bold text-gray-800">
-              {step === "choose" && "Add New Item"}
-              {step === "link" && "Add Link"}
+              {step === 'choose' && 'Add New Item'}
+              {step === 'link' && 'Add Link'}
             </h2>
-            <button onClick={handleClose} className="p-2 hover:bg-gray-100 rounded-full">
+            <button
+              onClick={handleClose}
+              className="p-2 hover:bg-gray-100 rounded-full"
+            >
               <X size={20} />
             </button>
           </div>
 
           <AnimatePresence mode="wait">
-            {step === "choose" && (
+            {step === 'choose' && (
               <motion.div
                 key="choose"
                 initial={{ opacity: 0, x: -20 }}
@@ -78,12 +83,12 @@ const handleSave = () => {
                   icon={<Link size={20} />}
                   title="New Link"
                   description="Add a new link to active collection"
-                  onClick={() => setStep("link")}
+                  onClick={() => setStep('link')}
                 />
               </motion.div>
             )}
 
-            {step === "link" && (
+            {step === 'link' && (
               <motion.div
                 key="link"
                 initial={{ opacity: 0, x: -20 }}
@@ -115,7 +120,7 @@ const handleSave = () => {
                 </div>
 
                 <ActionButtons
-                  onCancel={() => setStep("choose")}
+                  onCancel={() => setStep('choose')}
                   onSave={handleSave}
                   saveDisabled={!url.trim() || !title.trim()}
                 />
@@ -125,9 +130,8 @@ const handleSave = () => {
         </motion.div>
       </motion.div>
     </AnimatePresence>
-  );
+  )
 }
-
 
 function OptionButton({ icon, title, description, onClick }) {
   return (
@@ -145,7 +149,7 @@ function OptionButton({ icon, title, description, onClick }) {
         <p className="text-sm text-gray-500">{description}</p>
       </div>
     </motion.button>
-  );
+  )
 }
 
 function ActionButtons({ onCancel, onSave, saveDisabled }) {
@@ -165,5 +169,5 @@ function ActionButtons({ onCancel, onSave, saveDisabled }) {
         Save
       </button>
     </div>
-  );
+  )
 }

@@ -18,18 +18,23 @@ export default function Home() {
       <main className="flex-1 p-8 space-y-6 md:ml-0 pt-20 md:pt-8 max-w-screen">
         <AddCollectionButton onClick={addCollection} />
 
-        {/* 🔥 LOADING ANIMATION */}
+ 
         {isAddingCollection && <SkeletonDot />}
 
         {collections.map((col, index) => (
           <CollectionCard
             key={col.id}
             title={col.name}
-            collectionIndex={index}
+         index={index}   
             active={col.id === activeCollectionId}
             onClick={() => setActiveCollection(col.id)}
           >
-            {col.id === activeCollectionId && <LinksSortableList />}
+           {col.id === activeCollectionId && (
+      <LinksSortableList
+        links={col.links}          // 🔥 KIRIM LINKS NYA
+        collectionIndex={index}    // 🔥 biar tau milik collection mana
+      />
+    )}
           </CollectionCard>
         ))}
       </main>

@@ -19,7 +19,7 @@ import { useLinksStore } from '@/store/useLinkStore'
 import SortableLink from './SortAbleLink'
 
 export default function LinksSortableList() {
-  // 🔥 ambil collections + active id
+
   const collections = useLinksStore((s) => s.collections)
   const activeCollectionId = useLinksStore((s) => s.activeCollectionId)
 
@@ -28,7 +28,7 @@ export default function LinksSortableList() {
   const deleteLink = useLinksStore((s) => s.deleteLink)
   const duplicateLink = useLinksStore((s) => s.duplicateLink)
 
-  // 🔹 ambil links dari collection aktif
+ 
   const activeCollection = collections.find(c => c.id === activeCollectionId)
   const links = activeCollection?.links || []
 
