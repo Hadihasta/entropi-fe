@@ -33,7 +33,7 @@ export default function CollectionCard({ title, children, collectionId }) {
       <AddModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
-        collectionId={collectionId}   // ✅ PASS ID
+        collectionId={collectionId}   
       />
 
       {open && <div className="mt-4 space-y-3">{children}</div>}

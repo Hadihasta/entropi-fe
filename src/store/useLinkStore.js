@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-// import { nanoid } from "nanoid";
+
 
 const getNextCollectionId = (collections) => {
   if (collections.length === 0) return 1
@@ -26,10 +26,9 @@ export const useLinksStore = create((set) => ({
   activeCollectionId: 1,
   isAddingCollection: false, 
 
-  // 🔹 SET COLLECTION ACTIVE
+
   setActiveCollection: (id) => set({ activeCollectionId: id }),
 
-  // ➕ ADD COLLECTION (dipanggil tombol kamu)
   addCollection: async () => {
     set({ isAddingCollection: true })
 
@@ -53,7 +52,6 @@ export const useLinksStore = create((set) => ({
     })
   },
 
-  // ➕ ADD LINK KE COLLECTION AKTIF
   addLink: () =>
     set((state) => ({
       collections: state.collections.map((col) =>

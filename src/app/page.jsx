@@ -13,7 +13,6 @@ export default function Home() {
   const addCollection = useLinksStore((s) => s.addCollection)
   const isAddingCollection = useLinksStore((s) => s.isAddingCollection)
 
-
   return (
     <div className="flex min-h-screen w-full bg-linear-160 from-primary to-secondary text-foreground">
       <Sidebar />
@@ -22,13 +21,13 @@ export default function Home() {
 
         {collections.map((col) => (
           <CollectionCard
-          key={col.id}
-    title={col.name}
-    collectionId={col.id} 
+            key={col.id}
+            title={col.name}
+            collectionId={col.id}
           >
             <LinksSortableList
               links={col.links}
-              collectionId={col.id} // 🔥 penting
+              collectionId={col.id}
             />
           </CollectionCard>
         ))}
